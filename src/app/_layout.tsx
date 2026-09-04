@@ -25,8 +25,14 @@ function RootNavigator() {
   const [volumeReady, setVolumeReady] = useState(false);
 
   useEffect(() => {
-    initVolumePref().then(() => setVolumeReady(true));
+    console.log('[RootNavigator] mount: initVolumePref effect starting');
+    initVolumePref().then(() => {
+      console.log('[RootNavigator] initVolumePref resolved');
+      setVolumeReady(true);
+    });
   }, []);
+
+  console.log('[RootNavigator] render: isLoading =', isLoading, 'volumeReady =', volumeReady);
 
   if (isLoading || !volumeReady) {
     return (
@@ -36,6 +42,8 @@ function RootNavigator() {
     );
   }
 
+console.log('[RootNavigator] gate cleared, rendering Stack, hasSession =', !!session);
+  
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: Colors.bg } }}>
       <Stack.Screen name="legal/[slug]" options={{ presentation: 'modal' }} />
