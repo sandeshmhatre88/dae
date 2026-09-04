@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { withTimeout } from './withTimeout';
 
 // A single volume/mute preference shared by every video in the app (main
 // player + Shorts), kept in memory so new players can read it synchronously
@@ -16,10 +17,14 @@ const listeners = new Set<(pref: VolumePref) => void>();
 
 async function readFromStorage(): Promise<VolumePref> {
   try {
-    const [volumeRaw, mutedRaw] = await Promise.all([
-      AsyncStorage.getItem(VOLUME_KEY),
-      AsyncStorage.getItem(MUTED_KEY),
-    ]);
+    console.log('[volumeStore] readFromStorage: start');
+    const [volumeRaw, mutedRaw] = await withTimeout(
+      Promise.all([AsyncStorage.getItem(VOLUME_KEY), AsyncStorage.getItem(MUTED_KEY)]),
+      5000,
+      [null, null] as [string | null, string | null],
+      'AsyncStorage.getItem(volume/muted)'
+      );
+    console.log('[volumeStore] readFromStorage: resolved');
     const volume = volumeRaw !== null ? Number(volumeRaw) : 1;
     return {
       volume: Number.isFinite(volume) ? Math.min(1, Math.max(0, volume)) : 1,
