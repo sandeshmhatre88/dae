@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import type { LoginSuccess } from '../api/types';
+import { withTimeout } from '../withTimeout';
 
 const KEY = 'dae.session';
 
@@ -18,7 +19,12 @@ export async function saveSession(session: LoginSuccess) {
 }
 
 export async function loadSession(): Promise<LoginSuccess | null> {
-  const raw = Platform.OS === 'web' ? localStorage.getItem(KEY) : await SecureStore.getItemAsync(KEY);
+  console.log('[tokenStore] loadSession: start');
+  const raw =
+    Platform.OS === 'web'
+  ? localStorage.getItem(KEY)
+    : await withTimeout(SecureStore.getItemAsync(KEY), 5000, null, 'SecureStore.getItemAsync(dae.session)');
+  console.log('[tokenStore] loadSession: resolved, hasSession =', !!raw);
   if (!raw) return null;
   try {
     return JSON.parse(raw) as LoginSuccess;
