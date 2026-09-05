@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 
 export default function AuthLayout() {
+  console.log('[AuthLayout] rendering');
   return (
     <Stack initialRouteName="login" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="login" />
