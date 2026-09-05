@@ -19,6 +19,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 const NOT_REGISTERED_DEBUG = 'no phone_number on userAttributes - nothing sent';
 
 export default function LoginScreen() {
+  console.log('[LoginScreen] rendering');
   const { sendOtp } = useAuth();
   const [mobile, setMobile] = useState('');
   const [error, setError] = useState('');
